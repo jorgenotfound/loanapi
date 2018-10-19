@@ -34,6 +34,12 @@ class MainHandler(tornado.web.RequestHandler):
 
 class LoanHandler(tornado.web.RequestHandler):
 
+    def set_default_headers(self):
+        self.set_header("Access-Control-Allow-Origin", "*")
+        self.set_header("Access-Control-Allow-Headers",
+                        "x-requested-with, Content-Type")
+        self.set_header('Access-Control-Allow-Methods', 'POST, OPTIONS')
+
     def post(self):
         data = json.loads(self.request.body)
 
@@ -45,14 +51,14 @@ class LoanHandler(tornado.web.RequestHandler):
             response = 'Amount is required.'
         finally:
             self.set_status(status)
-            self.write(response)
+            self.write({'message': response})
 
 
 def make_app():
     return tornado.web.Application([
         (r"/", MainHandler),
         (r"/validate", LoanHandler),
-    ], debug=True)
+    ], debug=True, autoreload=False)
 
 
 if __name__ == "__main__":
