@@ -41,22 +41,26 @@ class LoanHandlerTestCase(AsyncHTTPTestCase):
         data = {'bad': 'request'}
         response = self.fetch('/validate', body=json.dumps(data), method="POST")
         self.assertEqual(response.code, HTTPStatus.BAD_REQUEST)
-        self.assertEqual(response.body.decode(), 'Amount is required.')
+        body = json.loads(response.body)
+        self.assertEqual(body['message'], 'Amount is required.')
 
     def test_loan_handler_undecided(self):
         data = {'amount': 50000}
         response = self.fetch('/validate', body=json.dumps(data), method="POST")
         self.assertEqual(response.code, HTTPStatus.OK)
-        self.assertEqual(response.body.decode(), app.MESSAGES['undecided'])
+        body = json.loads(response.body)
+        self.assertEqual(body['message'], app.MESSAGES['undecided'])
 
     def test_loan_handler_approved(self):
         data = {'amount': 49999}
         response = self.fetch('/validate', body=json.dumps(data), method="POST")
         self.assertEqual(response.code, HTTPStatus.OK)
-        self.assertEqual(response.body.decode(), app.MESSAGES['approved'])
+        body = json.loads(response.body)
+        self.assertEqual(body['message'], app.MESSAGES['approved'])
 
     def test_loan_handler_declined(self):
         data = {'amount': 50001}
         response = self.fetch('/validate', body=json.dumps(data), method="POST")
         self.assertEqual(response.code, HTTPStatus.OK)
-        self.assertEqual(response.body.decode(), app.MESSAGES['declined'])
+        body = json.loads(response.body)
+        self.assertEqual(body['message'], app.MESSAGES['declined'])
